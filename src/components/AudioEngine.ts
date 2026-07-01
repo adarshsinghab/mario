@@ -36,25 +36,27 @@ export class AudioEngine {
 
     // Setup HTML Audio
     if (!this.bgAudio) {
-      this.bgAudio = new Audio('/sounds/bg.mp3');
-      this.bgAudio.loop = true;
-      this.bgAudio.volume = 0.95;
+      const createAudio = (src: string, loop: boolean = false, vol: number = 0.85) => {
+        const a = new Audio(src);
+        a.preload = 'auto';
+        a.loop = loop;
+        a.volume = vol;
+        a.load();
+        return a;
+      };
 
-      this.undergroundAudio = new Audio('/sounds/underground_bgm.ogg');
-      this.undergroundAudio.loop = true;
-      this.undergroundAudio.volume = 0.95;
-      
-      this.explosionAudio = new Audio('/explosion.mp3');
-      this.explosionAudio.volume = 0.85;
+      this.bgAudio = createAudio('/sounds/bg.mp3', true, 0.95);
+      this.undergroundAudio = createAudio('/sounds/underground_bgm.ogg', true, 0.95);
+      this.explosionAudio = createAudio('/explosion.mp3', false, 0.85);
 
-      this.jumpAudio = new Audio('/sounds/jump.wav');
-      this.coinAudio = new Audio('/sounds/coin.wav');
-      this.blockBreakAudio = new Audio('/sounds/blockbrak.wav');
-      this.dieAudio = new Audio('/sounds/die.wav');
-      this.flagpoleAudio = new Audio('/sounds/flagpole.wav');
-      this.gameoverAudio = new Audio('/sounds/gameover.wav');
-      this.stageClearAudio = new Audio('/sounds/stage_clear.wav');
-      this.fireworksAudio = new Audio('/sounds/fireworks.wav');
+      this.jumpAudio = createAudio('/sounds/jump.wav', false, 0.8);
+      this.coinAudio = createAudio('/sounds/coin.wav', false, 0.9);
+      this.blockBreakAudio = createAudio('/sounds/blockbrak.wav', false, 0.8);
+      this.dieAudio = createAudio('/sounds/die.wav', false, 0.95);
+      this.flagpoleAudio = createAudio('/sounds/flagpole.wav', false, 0.95);
+      this.gameoverAudio = createAudio('/sounds/gameover.wav', false, 0.95);
+      this.stageClearAudio = createAudio('/sounds/stage_clear.wav', false, 0.95);
+      this.fireworksAudio = createAudio('/sounds/fireworks.wav', false, 0.95);
     }
 
     const resumeOnInteraction = () => {
@@ -101,6 +103,13 @@ export class AudioEngine {
   /* ── Play / Stop music ───────────────────────────────── */
   startMusic(theme: 'overworld' | 'underground' = 'overworld') {
     this.init();
+    
+    // If the correct theme is already playing, do nothing
+    const track = theme === 'underground' ? this.undergroundAudio : this.bgAudio;
+    if (this._playing && this.currentTheme === theme && track && !track.paused) {
+      return;
+    }
+
     this.currentTheme = theme;
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume().catch(() => {});
@@ -109,7 +118,6 @@ export class AudioEngine {
     // Stop any playing music first
     this.stopMusic();
 
-    const track = theme === 'underground' ? this.undergroundAudio : this.bgAudio;
     if (track) {
       track.currentTime = 0;
       track.play().catch(() => {});

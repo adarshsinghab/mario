@@ -243,21 +243,13 @@ export default function Page() {
       {/* ══════════════════════════════════════════════════
           CINEMATIC GAME HERO SECTION
       ══════════════════════════════════════════════════ */}
-      <section style={{ 
-        width: '100%', height: '100vh', 
-        position: 'relative', overflow: 'hidden',
-        display: 'flex', flexDirection: 'column', background: '#000'
-      }}>
-        <div style={{ flex: 1, position: 'relative' }}>
+      <section className="game-hero-section">
+        <div className="game-wrapper">
           <MarioGame onSkillReveal={(sk) => setRevealedSkills(sk)} />
         </div>
         
         {/* Subtle scroll prompt & skills overlay */}
-        <div style={{ 
-          background: '#050505', borderTop: '1px solid rgba(255,255,255,0.05)',
-          padding: '16px 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
-          zIndex: 10
-        }}>
+        <div className="skills-footer">
           {revealedSkills.length > 0 && (
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
               <span style={{ fontSize: 10, color: 'var(--text-secondary)', textTransform: 'uppercase', display: 'flex', alignItems: 'center' }}>

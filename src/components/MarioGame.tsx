@@ -1378,9 +1378,10 @@ export default function MarioGame({
       const gs=gsRef.current;
       // Start game from title
       if(gs.phase==='title'){
+        audio.init();
+        audio.startMusic();
         gs.phase='respawn_screen';
         gs.respawnTimer=0;
-        audio.init();
       }
       // Restart
       if(gs.phase==='win'||gs.phase==='gameover'){
@@ -1507,6 +1508,7 @@ export default function MarioGame({
     const gs = gsRef.current;
     if (gs.phase === 'title') {
       audio.init();
+      audio.startMusic();
       gs.phase = 'respawn_screen';
       gs.respawnTimer = 0;
     } else if (gs.phase === 'gameover') {
@@ -1525,7 +1527,9 @@ export default function MarioGame({
     if(action==='jump')keysRef.current.jumpHeld=val;
     const gs=gsRef.current;
     if(gs.phase==='title'&&val){
-      gs.phase='respawn_screen';gs.respawnTimer=0;audio.init();
+      audio.init();
+      audio.startMusic();
+      gs.phase='respawn_screen';gs.respawnTimer=0;
     }
     if((gs.phase==='win'||gs.phase==='gameover')&&val){
       const fresh=initState();fresh.phase='playing';
