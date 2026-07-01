@@ -57,6 +57,9 @@ export class AudioEngine {
       this.gameoverAudio = createAudio('/sounds/gameover.wav', false, 0.95);
       this.stageClearAudio = createAudio('/sounds/stage_clear.wav', false, 0.95);
       this.fireworksAudio = createAudio('/sounds/fireworks.wav', false, 0.95);
+
+      // Designate background music to start playing immediately on user interaction
+      this._playing = true;
     }
 
     const resumeOnInteraction = () => {
@@ -64,9 +67,11 @@ export class AudioEngine {
         this.ctx.resume().catch(() => {});
       }
 
-      // Unlock HTML Audio elements by briefly playing them with volume 0
+      const activeTrack = this.currentTheme === 'underground' ? this.undergroundAudio : this.bgAudio;
+
+      // Unlock HTML Audio elements by briefly playing them with volume 0 (except active)
       const unlockAudio = (audioElement: HTMLAudioElement | null) => {
-        if (!audioElement) return;
+        if (!audioElement || audioElement === activeTrack) return;
         const originalVolume = audioElement.volume;
         audioElement.volume = 0;
         audioElement.play()
@@ -88,10 +93,9 @@ export class AudioEngine {
       unlockAudio(this.stageClearAudio);
       unlockAudio(this.fireworksAudio);
 
-      if (this._playing && !this._muted) {
-        const track = this.currentTheme === 'underground' ? this.undergroundAudio : this.bgAudio;
-        if (track && track.paused) {
-          track.play().catch(() => {});
+      if (this._playing && !this._muted && activeTrack) {
+        if (activeTrack.paused) {
+          activeTrack.play().catch(() => {});
         }
       }
     };
