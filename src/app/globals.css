@@ -1,26 +1,319 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
+/* ── Reset ─────────────────────────────────────────────── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+/* ── Design Tokens ──────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-color: #000000;
+  --surface-color: #0a0018;
+  --border-color: #ffffff;
+  --accent-glow: #7b2fbe;
+  --text-primary: #ffffff;
+  --text-secondary: #c0c0c0;
+  
+  /* Retro tokens for game */
+  --red:#e52521;--yellow:#fbd000;--blue:#049cd8;--green:#43b047;
+  --dark:#0a0018;--pipe:#00a800;--sky:#5c94fc;--brick:#c84c0c;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: 'Press Start 2P', monospace;
+  overflow-x: hidden;
+  -webkit-font-smoothing: none;
+  image-rendering: pixelated;
+  position: relative;
+  line-height: 1.6;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Subtle CRT scanline overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.18) 50%);
+  background-size: 100% 4px;
+  z-index: 99999;
+  opacity: 0.22;
+}
+
+/* ── Typography ────────────────────────────────────────── */
+h1, h2, h3, h4 {
+  font-family: 'Press Start 2P', monospace;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.pixel { font-family: 'Press Start 2P', monospace !important; }
+
+.retro-title {
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  color: var(--yellow);
+  text-shadow: 3px 3px 0px #8b0000;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.text-gradient {
+  color: var(--yellow);
+  text-shadow: 2px 2px 0px #8b0000;
+}
+
+.text-accent {
+  color: var(--blue);
+  text-shadow: 2px 2px 0px #025070;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-color); }
+::-webkit-scrollbar-thumb { background: #444; border: 2px solid #000; }
+::-webkit-scrollbar-thumb:hover { background: var(--yellow); border-color: #000; }
+
+/* ══════════════════════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════════════════ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* ── Retro Custom Cards ── */
+.retro-glass-card {
+  background: var(--surface-color);
+  border: 4px solid #fff;
+  box-shadow: 8px 8px 0px #000;
+  padding: 2.2rem;
+  position: relative;
+  transition: all 0.1s;
+  display: flex;
+  flex-direction: column;
+}
+.retro-glass-card:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 12px 12px 0px var(--yellow);
+  border-color: var(--yellow);
+}
+
+.retro-tag {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 6px 10px;
+  background: var(--dark);
+  border: 2px solid #fff;
+  color: #fff;
+  border-radius: 0;
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════════ */
+.glass-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: #000;
+  border-bottom: 4px solid var(--yellow);
+  padding: 0 2rem; display: flex; align-items: center;
+  justify-content: space-between; height: 72px; gap: 10px;
+}
+.nav-links { display: flex; gap: 24px; list-style: none; }
+.nav-links a {
+  font-family: 'Press Start 2P', monospace; font-size: 10px;
+  color: #fff; text-decoration: none;
+  text-transform: uppercase;
+}
+.nav-links a:hover { color: var(--yellow); }
+
+/* ══════════════════════════════════════════════════════════
+   GLASS CARDS & CONTAINERS (NOW RETRO)
+═══════════════════════════════════════════════════════ */
+.glass-card {
+  background: var(--surface-color);
+  border: 4px solid #fff;
+  padding: 2rem;
+  box-shadow: 8px 8px 0px #000;
+  transition: transform 0.1s, box-shadow 0.1s, border-color 0.1s;
+  position: relative; overflow: hidden;
+}
+.glass-card:hover {
+  transform: translate(-4px, -4px);
+  border-color: var(--yellow);
+  box-shadow: 12px 12px 0px var(--red);
+}
+
+.game-container {
+  background: #000;
+  border: 4px solid #fff;
+  overflow: hidden;
+  box-shadow: 8px 8px 0px #000;
+  position: relative;
+}
+
+/* ── Retro Custom Buttons ── */
+.btn-retro {
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 10px;
+  padding: 14px 28px;
+  border: 4px solid #fff;
+  box-shadow: 4px 4px 0px #8b0000;
+  background: var(--red);
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.1s;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-retro:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #000;
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+.btn-retro:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #000;
+}
+
+.btn-retro-blue {
+  background: var(--blue);
+  box-shadow: 4px 4px 0px #025070;
+}
+.btn-retro-purple {
+  background: var(--accent-glow);
+  box-shadow: 4px 4px 0px #3a165e;
+}
+
+/* ══════════════════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════════════ */
+.btn-primary {
+  background: var(--blue);
+  color: #fff; font-family: 'Press Start 2P', monospace; font-size: 12px;
+  padding: 14px 28px; border: 4px solid #fff; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+  transition: all 0.1s;
+  box-shadow: 6px 6px 0 #025070;
+  text-transform: uppercase;
+}
+.btn-primary:hover {
+  transform: translate(-2px, -2px); box-shadow: 8px 8px 0 #000; border-color: var(--yellow); color: var(--yellow);
+}
+
+.btn-secondary {
+  background: #333; color: #fff;
+  border: 4px solid #fff;
+  font-family: 'Press Start 2P', monospace; font-size: 12px;
+  padding: 14px 28px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+  transition: all 0.1s;
+  box-shadow: 6px 6px 0 #000;
+  text-transform: uppercase;
+}
+.btn-secondary:hover {
+  background: #555; border-color: var(--yellow); color: var(--yellow);
+}
+
+/* ══════════════════════════════════════════════════════════
+   BADGES
+═══════════════════════════════════════════════════════ */
+.tech-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 12px; background: #222;
+  border: 2px solid #fff;
+  font-size: 8px; color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  text-transform: uppercase;
+  transition: all 0.1s;
+  box-shadow: 2px 2px 0 #000;
+}
+.tech-badge:hover {
+  background: var(--blue); color: #fff;
+  border-color: var(--yellow);
+  box-shadow: 2px 2px 0 var(--yellow);
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════ */
+.hero-section {
+  padding: 120px 2rem 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+@media(max-width: 768px) {
+  .glass-nav { padding: 0 1rem; height: 60px; }
+  .nav-links { display: none; }
+  .glass-card { padding: 1.25rem; border-width: 3px; box-shadow: 6px 6px 0 #000; }
+  .btn-primary, .btn-secondary { padding: 12px 24px; font-size: 10px; }
+  .hero-section { padding: 100px 1rem 40px; }
+  section { padding-left: 1rem !important; padding-right: 1rem !important; }
+  h2 { font-size: 1.2rem !important; }
+}
+
+@media(max-width: 480px) {
+  .hero-section { padding: 90px 0.5rem 30px; }
+  .glass-card { padding: 1rem; }
+  section { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   ROTATE OVERLAY — shown in portrait on mobile
+═══════════════════════════════════════════════════════ */
+.rotate-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.rotate-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (max-width: 900px) and (orientation: portrait) {
+  .rotate-overlay {
+    display: flex !important;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+@media(max-width: 768px) {
+  .glass-card {
+    font-size: 10px;
+  }
+}
+
+@media(max-width: 480px) {
+  .tech-badge {
+    padding: 4px 8px;
+    font-size: 6px;
+  }
 }
