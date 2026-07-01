@@ -1543,7 +1543,7 @@ export default function MarioGame({
     <div style={{position:'relative',width:'100%',height:'100%',background:'#000',overflow:'hidden'}}>
       <canvas ref={canvasRef} width={CVW} height={CVH}
         onPointerDown={handleCanvasPointerDown}
-        style={{display:'block',width:'100%',height:'100%',objectFit:'fill',imageRendering:'pixelated',cursor:'default'}}
+        style={{display:'block',width:'100%',height:'100%',objectFit:'cover',objectPosition:'top',imageRendering:'pixelated',cursor:'default'}}
       />
 
       {/* WIN OVERLAY (HTML/CSS) */}
