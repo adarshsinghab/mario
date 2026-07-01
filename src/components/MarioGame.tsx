@@ -1237,7 +1237,7 @@ function drawTitle(ctx:CanvasRenderingContext2D,frame:number){
   if(Math.sin(frame*0.08)>0){
     ctx.fillStyle='#fbd000';
     ctx.font='16px "Press Start 2P",monospace';
-    ctx.fillText('PRESS ANY KEY TO START',CVW/2, 350);
+    ctx.fillText('PRESS ANY KEY OR TAP TO START',CVW/2, 350);
   }
 }
 
@@ -1334,6 +1334,10 @@ export default function MarioGame({
   useEffect(() => { onScoreUpdateRef.current = onScoreUpdate; }, [onScoreUpdate]);
   useEffect(() => { onSkillRevealRef.current = onSkillReveal; }, [onSkillReveal]);
   useEffect(() => { onGameCompleteRef.current = onGameComplete; }, [onGameComplete]);
+
+  useEffect(() => {
+    audio.init();
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -1498,6 +1502,22 @@ export default function MarioGame({
     return()=>{audio.stopMusic();};
   },[]);
 
+  const handleCanvasPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    audio.ensurePlaying();
+    const gs = gsRef.current;
+    if (gs.phase === 'title') {
+      audio.init();
+      gs.phase = 'respawn_screen';
+      gs.respawnTimer = 0;
+    } else if (gs.phase === 'gameover') {
+      audio.init();
+      audio.startMusic();
+      const fresh = initState();
+      fresh.phase = 'playing';
+      Object.assign(gsRef.current, fresh);
+    }
+  };
+
   // Touch controls
   const touch=(action:keyof Keys,val:boolean)=>{
     audio.ensurePlaying();
@@ -1518,6 +1538,7 @@ export default function MarioGame({
   return(
     <div style={{position:'relative',width:'100%',height:'100%',background:'#000',overflow:'hidden'}}>
       <canvas ref={canvasRef} width={CVW} height={CVH}
+        onPointerDown={handleCanvasPointerDown}
         style={{display:'block',width:'100%',height:'100%',objectFit:'contain',imageRendering:'pixelated',cursor:'default'}}
       />
 

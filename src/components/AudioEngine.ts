@@ -36,7 +36,7 @@ export class AudioEngine {
 
     // Setup HTML Audio
     if (!this.bgAudio) {
-      this.bgAudio = new Audio('/sounds/bg.ogg');
+      this.bgAudio = new Audio('/sounds/bg.mp3');
       this.bgAudio.loop = true;
       this.bgAudio.volume = 0.95;
 
@@ -61,6 +61,31 @@ export class AudioEngine {
       if (this.ctx && this.ctx.state === 'suspended') {
         this.ctx.resume().catch(() => {});
       }
+
+      // Unlock HTML Audio elements by briefly playing them with volume 0
+      const unlockAudio = (audioElement: HTMLAudioElement | null) => {
+        if (!audioElement) return;
+        const originalVolume = audioElement.volume;
+        audioElement.volume = 0;
+        audioElement.play()
+          .then(() => {
+            audioElement.pause();
+            audioElement.volume = originalVolume;
+          })
+          .catch(() => {});
+      };
+
+      unlockAudio(this.bgAudio);
+      unlockAudio(this.undergroundAudio);
+      unlockAudio(this.jumpAudio);
+      unlockAudio(this.coinAudio);
+      unlockAudio(this.blockBreakAudio);
+      unlockAudio(this.dieAudio);
+      unlockAudio(this.flagpoleAudio);
+      unlockAudio(this.gameoverAudio);
+      unlockAudio(this.stageClearAudio);
+      unlockAudio(this.fireworksAudio);
+
       if (this._playing && !this._muted) {
         const track = this.currentTheme === 'underground' ? this.undergroundAudio : this.bgAudio;
         if (track && track.paused) {
