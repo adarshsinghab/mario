@@ -66,13 +66,17 @@ if %ERRORLEVEL% neq 0 (
 echo.
 echo [4/4] Deploying to Vercel...
 echo.
-echo *************************************************************
-echo NOTE: If this is your first time using Vercel on this computer,
-echo a browser tab will open for a quick free login. 
-echo After logging in, return here and the script will continue!
-echo *************************************************************
-echo.
 
+:: Check if logged in to Vercel
+call vercel whoami >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+    echo You are not logged in to Vercel (or your login session has expired).
+    echo Launching login...
+    call vercel login
+)
+
+echo.
+echo Deploying application...
 :: Deploy with production flags and accept defaults automatically
 call vercel --prod --yes
 
