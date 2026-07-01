@@ -1540,11 +1540,12 @@ export default function MarioGame({
   };
 
   return(
-    <div style={{position:'relative',width:'100%',height:'100%',background:'#000',overflow:'hidden'}}>
-      <canvas ref={canvasRef} width={CVW} height={CVH}
-        onPointerDown={handleCanvasPointerDown}
-        style={{display:'block',width:'100%',height:'100%',objectFit:'contain',imageRendering:'pixelated',cursor:'default'}}
-      />
+    <div style={{position:'relative',width:'100%',height:'100%',background:'#000',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center'}}>
+      <div style={{position:'relative',aspectRatio:'920/552',width:'100%',height:'100%',maxWidth:'100%',maxHeight:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
+        <canvas ref={canvasRef} width={CVW} height={CVH}
+          onPointerDown={handleCanvasPointerDown}
+          style={{display:'block',width:'100%',height:'100%',objectFit:'contain',imageRendering:'pixelated',cursor:'default'}}
+        />
 
       {/* WIN OVERLAY (HTML/CSS) */}
       {showWinOverlay && (
@@ -1667,9 +1668,10 @@ export default function MarioGame({
       </div>
 
       {/* Touch D-pad — enlarged for mobile friendliness, mute integrated */}
+      {/* Touch D-pad — positioned inside the canvas aspect-ratio bounds! */}
       <div style={{
-        position:'absolute',bottom:12,left:0,right:0,
-        display:'flex',justifyContent:'space-between',padding:'0 12px',
+        position:'absolute',bottom:12,left:12,right:12,
+        display:'flex',justifyContent:'space-between',
         pointerEvents:'none',alignItems:'flex-end',
       }}>
         {/* Left side: D-pad */}
@@ -1699,6 +1701,7 @@ export default function MarioGame({
               style={{...dBtn,width:95,fontSize:11,background:CHAR.hat+'dd',color:'#fff'}}>JUMP</button>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
